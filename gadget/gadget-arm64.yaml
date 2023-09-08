@@ -37,3 +37,23 @@ volumes:
         filesystem: ext4
         type: 0FC63DAF-8483-4772-8E79-3D69D8477DE4
         size: 1G
+
+defaults:
+  # Disable ubuntu-frame's daemon mode
+  BPZbvWzvoMTrpec4goCXlckLe2IhfthK:
+    daemon: false
+    # Add any additional Frame configuration here
+    #
+    # https://mir-server.io/docs/configuring-ubuntu-frame-through-a-gadget-snap
+
+  # Add any configuration for other snaps here
+  #
+  # https://ubuntu.com/core/docs/gadget-snaps#heading--gadget
+
+# Connect additional ubuntu-frame interfaces
+connections:
+  # This just silences some benign warnings
+  - plug: BPZbvWzvoMTrpec4goCXlckLe2IhfthK:hardware-observe
+
+  # This allows Frame to run in a user session
+  - plug: BPZbvWzvoMTrpec4goCXlckLe2IhfthK:login-session-control
