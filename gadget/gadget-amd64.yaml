@@ -61,6 +61,10 @@ defaults:
     #
     # https://mir-server.io/docs/configuring-ubuntu-frame-through-a-gadget-snap
 
+  # Disable ubuntu-frame's daemon mode
+  ibbpk78Tfx7hWlik9UsTdqNBOiHFiGsK:
+    daemon: false
+
   # Add any configuration for other snaps here
   #
   # https://ubuntu.com/core/docs/gadget-snaps#heading--gadget

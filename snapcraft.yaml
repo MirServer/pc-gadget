@@ -86,3 +86,12 @@ parts:
       # We need to install directly in the project dir as snapcraft checks there
       # for gadget.yaml instead of looking first at the prime folder.
       install -m 644 gadget-"$CRAFT_TARGET_ARCH".yaml "$CRAFT_PROJECT_DIR"/gadget.yaml
+
+  # Dump contents of the `extra` folder into the snap
+  #
+  # cloud.conf and cmdline.extra are special:
+  # https://ubuntu.com/core/docs/gadget-snaps#heading--setup
+  # https://ubuntu.com/core/docs/modify-kernel-options#heading--cmdline
+  extra:
+    plugin: dump
+    source: extra
