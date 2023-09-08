@@ -1,0 +1,43 @@
+#!/usr/bin/make -f
+
+# Insert your snaps and their default providers here
+# `ubuntu-image` will tell you if anything's missing
+#
+# https://github.com/Canonical/ubuntu-image/blob/main/ubuntu-image.rst#snap-command-options
+ALL_SNAPS = $(LOCAL_SNAPS) mesa-core22 ubuntu-frame=22 graphics-test-tools=22 core18 gnome-3-28-1804 bare gtk-common-themes flutter-gallery
+
+# Increase this if you need more writable space
+IMAGE_SIZE = 4G
+
+ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
+GADGET_VERSION := $(shell sh -c "echo $$( awk '/^version:/ { print $$2 }' snapcraft.yaml )" )
+GADGET_FILES := $(shell git ls-files)
+
+# Default to building the image
+all: ubuntu-frame_$(ARCH).img
+
+# Builds the gadget snap
+pc_$(GADGET_VERSION)_$(ARCH).snap: gadget/gadget-$(ARCH).yaml $(GADGET_FILES)
+	snapcraft
+
+# Fetches the model matching the host architecture
+%.model:
+	wget --output-document=$@ https://github.com/snapcore/models/raw/master/$@
+
+# Builds the image
+ubuntu-frame_$(ARCH).img: pc_$(GADGET_VERSION)_$(ARCH).snap ubuntu-core-22-$(ARCH)-dangerous.model
+	rm -rf img/
+	ubuntu-image snap --output-dir img --image-size $(IMAGE_SIZE) \
+	  $(foreach snap,$(ALL_SNAPS),--snap $(snap)) --snap $^
+	mv img/pc.img $@
+	echo $@ ready
+
+# Cleans the artifacts
+clean:
+	rm -rf \
+		pc_$(GADGET_VERSION)_$(ARCH).snap \
+		img ubuntu-frame_$(ARCH).img \
+		ubuntu-core-22-$(ARCH)-dangerous.model
+	snapcraft clean
+
+.PHONY: all
